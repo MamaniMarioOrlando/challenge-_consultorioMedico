@@ -29,9 +29,17 @@ public class UsuarioMapper {
     // Actualiza una entidad Usuario con los datos de UsuarioUpdateDto
     public static void updateEntityFromDto(UsuarioUpdateDto dto, Usuario usuario) {
         if (dto == null || usuario == null) return;
-        if (dto.getNombre() != null) usuario.setNombre(dto.getNombre());
-        if (dto.getApellido() != null) usuario.setApellido(dto.getApellido());
-        if (dto.getEmail() != null) usuario.setEmail(dto.getEmail());
-        if (dto.getActivo() != null) usuario.setActivo(dto.getActivo());
+        if (dto.getNombre() != null && !dto.getNombre().trim().isEmpty()) {
+            usuario.setNombre(dto.getNombre());
+        }
+        if (dto.getApellido() != null && !dto.getApellido().trim().isEmpty()) {
+            usuario.setApellido(dto.getApellido());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().trim().isEmpty()) {
+            usuario.setEmail(dto.getEmail());
+        }
+        if (dto.getActivo() != null) {
+            usuario.setActivo(dto.getActivo());
+        }
     }
 }

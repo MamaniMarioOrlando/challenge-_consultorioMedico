@@ -17,3 +17,4 @@ public class MedicoUpdateDto {
     private LocalDate fechaNacimiento;
     private Boolean activo;
 }
+

@@ -26,13 +26,23 @@ public class MedicoMapper {
                 .build();
     }
 
+    // Actualiza una entidad Medico con los datos de MedicoUpdateDto
     public static void updateEntityFromDto(MedicoUpdateDto dto, Medico medico) {
         if (dto == null || medico == null) return;
-        if (dto.getNombre() != null) medico.setNombre(dto.getNombre());
-        if (dto.getApellido() != null) medico.setApellido(dto.getApellido());
-        if (dto.getMatricula() != null) medico.setMatricula(dto.getMatricula());
-        if (dto.getFechaNacimiento() != null) medico.setFechaNacimiento(dto.getFechaNacimiento());
-        if (dto.getActivo() != null) medico.setActivo(dto.getActivo());
+        if (dto.getNombre() != null && !dto.getNombre().trim().isEmpty()) {
+            medico.setNombre(dto.getNombre());
+        }
+        if (dto.getApellido() != null && !dto.getApellido().trim().isEmpty()) {
+            medico.setApellido(dto.getApellido());
+        }
+        if (dto.getMatricula() != null && !dto.getMatricula().trim().isEmpty()) {
+            medico.setMatricula(dto.getMatricula());
+        }
+        if (dto.getFechaNacimiento() != null) {
+            medico.setFechaNacimiento(dto.getFechaNacimiento());
+        }
+        if (dto.getActivo() != null) {
+            medico.setActivo(dto.getActivo());
+        }
     }
 }
-
