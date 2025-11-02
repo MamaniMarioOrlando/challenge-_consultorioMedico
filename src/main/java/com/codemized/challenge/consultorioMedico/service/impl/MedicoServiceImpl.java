@@ -34,7 +34,7 @@ public class MedicoServiceImpl implements MedicoService {
 
     @Override
     public List<MedicoDto> findAll() {
-        return medicoRepository.findAll().stream()
+        return medicoRepository.findAllByActivoTrue().stream()
                 .map(MedicoMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -42,6 +42,7 @@ public class MedicoServiceImpl implements MedicoService {
     @Override
     public MedicoDto findById(Long id) {
         Medico medico = medicoRepository.findById(id)
+                .filter(Medico::getActivo)
                 .orElseThrow(() -> new MedicoNotFoundException(id));
         return MedicoMapper.toDto(medico);
     }
@@ -49,6 +50,7 @@ public class MedicoServiceImpl implements MedicoService {
     @Override
     public MedicoDto update(Long id, MedicoUpdateDto medicoUpdateDto) {
         Medico medico = medicoRepository.findById(id)
+                .filter(Medico::getActivo)
                 .orElseThrow(() -> new MedicoNotFoundException(id));
         if (medicoUpdateDto.getMatricula() != null &&
             medicoRepository.findAll().stream().anyMatch(m -> m.getMatricula().equals(medicoUpdateDto.getMatricula()) && !m.getId().equals(id))) {
@@ -62,6 +64,7 @@ public class MedicoServiceImpl implements MedicoService {
     @Override
     public void deleteById(Long id) {
         Medico medico = medicoRepository.findById(id)
+                .filter(Medico::getActivo)
                 .orElseThrow(() -> new MedicoNotFoundException(id));
         medico.setActivo(false); // Eliminación lógica
         medicoRepository.save(medico);
