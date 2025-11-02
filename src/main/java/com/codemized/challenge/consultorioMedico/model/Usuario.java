@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -14,9 +13,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Medico {
+public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 100)
@@ -26,14 +25,11 @@ public class Medico {
     private String apellido;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String matricula;
-
-    @Column
-    private LocalDate fechaNacimiento;
+    private String email;
 
     @Column(nullable = false)
     private Boolean activo = true;
 
-    @ManyToMany(mappedBy = "medicos")
+    @ManyToMany(mappedBy = "usuarios")
     private Set<Consultorio> consultorios;
 }
