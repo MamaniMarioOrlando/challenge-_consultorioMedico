@@ -24,59 +24,35 @@ public class MedicoController {
     @PostMapping
     public ResponseEntity<ApiResponse<MedicoDto>> create(@Valid @RequestBody MedicoCreateDto dto) {
         MedicoDto medico = medicoService.save(dto);
-        ApiResponse<MedicoDto> response = ApiResponse.<MedicoDto>builder()
-                .status("success")
-                .message("Médico creado correctamente")
-                .data(medico)
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Médico creado correctamente", medico));
     }
 
     @Operation(summary = "Listar todos los médicos", description = "Devuelve una lista de todos los médicos activos.")
     @GetMapping
     public ResponseEntity<ApiResponse<List<MedicoDto>>> findAll() {
         List<MedicoDto> medicos = medicoService.findAll();
-        ApiResponse<List<MedicoDto>> response = ApiResponse.<List<MedicoDto>>builder()
-                .status("success")
-                .message("Listado de médicos")
-                .data(medicos)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("Listado de médicos", medicos));
     }
 
     @Operation(summary = "Buscar médico por ID", description = "Devuelve los datos de un médico según su ID.")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicoDto>> findById(@PathVariable Long id) {
         MedicoDto medico = medicoService.findById(id);
-        ApiResponse<MedicoDto> response = ApiResponse.<MedicoDto>builder()
-                .status("success")
-                .message("Médico encontrado")
-                .data(medico)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("Médico encontrado", medico));
     }
 
     @Operation(summary = "Actualizar médico", description = "Actualiza los datos de un médico existente por su ID.")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicoDto>> update(@PathVariable Long id, @RequestBody MedicoUpdateDto dto) {
         MedicoDto medico = medicoService.update(id, dto);
-        ApiResponse<MedicoDto> response = ApiResponse.<MedicoDto>builder()
-                .status("success")
-                .message("Médico actualizado correctamente")
-                .data(medico)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("Médico actualizado correctamente", medico));
     }
 
     @Operation(summary = "Eliminar médico", description = "Elimina lógicamente un médico por su ID (no se borra físicamente de la base de datos).")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         medicoService.deleteById(id);
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-                .status("success")
-                .message("Médico eliminado correctamente (eliminación lógica)")
-                .data(null)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("Médico eliminado correctamente (eliminación lógica)", null));
     }
 }

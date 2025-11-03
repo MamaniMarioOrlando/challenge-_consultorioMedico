@@ -1,5 +1,6 @@
 package com.codemized.challenge.consultorioMedico.exception;
 
+import com.codemized.challenge.consultorioMedico.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,5 +54,33 @@ public class GlobalExceptionHandler {
         body.put("mensajes", errores);
         return ResponseEntity.badRequest().body(body);
     }
-}
 
+    @ExceptionHandler(ConsultorioNotFoundException.class)
+    public ResponseEntity<String> handleConsultorioNotFound(ConsultorioNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ConsultorioAlreadyExistsException.class)
+    public ResponseEntity<String> handleConsultorioAlreadyExists(ConsultorioAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ConsultorioInactivoException.class)
+    public ResponseEntity<String> handleConsultorioInactivo(ConsultorioInactivoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(
+                ApiResponse.error(ex.getMessage(), null)
+        );
+    }
+
+}

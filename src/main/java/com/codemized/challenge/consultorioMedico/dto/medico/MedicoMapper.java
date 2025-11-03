@@ -26,7 +26,6 @@ public class MedicoMapper {
                 .build();
     }
 
-    // Actualiza una entidad Medico con los datos de MedicoUpdateDto
     public static void updateEntityFromDto(MedicoUpdateDto dto, Medico medico) {
         if (dto == null || medico == null) return;
         if (dto.getNombre() != null && !dto.getNombre().trim().isEmpty()) {
