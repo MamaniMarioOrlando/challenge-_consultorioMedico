@@ -1,10 +1,7 @@
 package com.codemized.challenge.consultorioMedico.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
@@ -13,6 +10,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(exclude = {"medicos", "usuarios"})
+@ToString(exclude = {"medicos", "usuarios"})
 public class Consultorio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,15 +35,16 @@ public class Consultorio {
     @Column(nullable = false)
     private Boolean activo = true;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "consultorio_medico",
         joinColumns = @JoinColumn(name = "consultorio_id"),
         inverseJoinColumns = @JoinColumn(name = "medico_id")
     )
+
     private Set<Medico> medicos;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "consultorio_usuario",
         joinColumns = @JoinColumn(name = "consultorio_id"),

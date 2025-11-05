@@ -1,8 +1,6 @@
 package com.codemized.challenge.consultorioMedico.service;
 
-import com.codemized.challenge.consultorioMedico.dto.consultorio.ConsultorioCreateDto;
-import com.codemized.challenge.consultorioMedico.dto.consultorio.ConsultorioDto;
-import com.codemized.challenge.consultorioMedico.dto.consultorio.ConsultorioUpdateDto;
+import com.codemized.challenge.consultorioMedico.dto.consultorio.*;
 
 import java.util.List;
 
@@ -12,4 +10,6 @@ public interface ConsultorioService {
     List<ConsultorioDto> findAll();
     ConsultorioDto findById(Long id);
     void deleteById(Long id);
+    ConsultorioDto agregarMedicos(AgregarMedicosRequestDto requestDto);
+    ConsultorioResumenDto obtenerResumenConsultorio(Long consultorioId);
 }

@@ -3,6 +3,7 @@ package com.codemized.challenge.consultorioMedico.controller;
 import com.codemized.challenge.consultorioMedico.dto.consultorio.ConsultorioCreateDto;
 import com.codemized.challenge.consultorioMedico.dto.consultorio.ConsultorioDto;
 import com.codemized.challenge.consultorioMedico.dto.consultorio.ConsultorioUpdateDto;
+import com.codemized.challenge.consultorioMedico.dto.consultorio.AgregarMedicosRequestDto;
 import com.codemized.challenge.consultorioMedico.response.ApiResponse;
 import com.codemized.challenge.consultorioMedico.service.ConsultorioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,6 +55,13 @@ public class ConsultorioController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         consultorioService.deleteById(id);
         return ResponseEntity.ok(ApiResponse.success("Consultorio eliminado lógicamente", null));
+    }
+
+    @Operation(summary = "Agregar médicos a un consultorio", description = "Agrega una lista de médicos activos a un consultorio existente")
+    @PostMapping("/medicos")
+    public ResponseEntity<ApiResponse<ConsultorioDto>> agregarMedicos(@Valid @RequestBody AgregarMedicosRequestDto requestDto) {
+        ConsultorioDto actualizado = consultorioService.agregarMedicos(requestDto);
+        return ResponseEntity.ok(ApiResponse.success("Médicos agregados exitosamente al consultorio", actualizado));
     }
 
 }
