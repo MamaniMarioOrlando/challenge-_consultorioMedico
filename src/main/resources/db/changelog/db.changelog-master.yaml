@@ -1,0 +1,181 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Mario
+      changes:
+        - createTable:
+            tableName: medico
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: nombre
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: apellido
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: matricula
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: fecha_nacimiento
+                  type: DATE
+              - column:
+                  name: activo
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2
+      author: Mario
+      changes:
+        - createTable:
+            tableName: usuario
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: nombre
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: apellido
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: activo
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 3
+      author: Mario
+      changes:
+        - createTable:
+            tableName: consultorio
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: nombre
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: direccion
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: telefono
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: horario_atencion
+                  type: VARCHAR(100)
+              - column:
+                  name: activo
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 4
+      author: Mario
+      changes:
+        - createTable:
+            tableName: consultorio_medico
+            columns:
+              - column:
+                  name: consultorio_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: medico_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: consultorio_medico
+            columnNames: consultorio_id, medico_id
+        - addForeignKeyConstraint:
+            baseTableName: consultorio_medico
+            baseColumnNames: consultorio_id
+            referencedTableName: consultorio
+            referencedColumnNames: id
+            constraintName: fk_consultorio_medico_consultorio
+        - addForeignKeyConstraint:
+            baseTableName: consultorio_medico
+            baseColumnNames: medico_id
+            referencedTableName: medico
+            referencedColumnNames: id
+            constraintName: fk_consultorio_medico_medico
+  - changeSet:
+      id: 5
+      author: Mario
+      changes:
+        - createTable:
+            tableName: consultorio_usuario
+            columns:
+              - column:
+                  name: consultorio_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: usuario_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: consultorio_usuario
+            columnNames: consultorio_id, usuario_id
+        - addForeignKeyConstraint:
+            baseTableName: consultorio_usuario
+            baseColumnNames: consultorio_id
+            referencedTableName: consultorio
+            referencedColumnNames: id
+            constraintName: fk_consultorio_usuario_consultorio
+        - addForeignKeyConstraint:
+            baseTableName: consultorio_usuario
+            baseColumnNames: usuario_id
+            referencedTableName: usuario
+            referencedColumnNames: id
+            constraintName: fk_consultorio_usuario_usuario
