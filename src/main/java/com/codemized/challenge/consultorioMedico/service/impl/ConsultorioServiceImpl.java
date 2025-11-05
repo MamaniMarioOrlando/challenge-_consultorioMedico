@@ -1,13 +1,16 @@
 package com.codemized.challenge.consultorioMedico.service.impl;
 
 import com.codemized.challenge.consultorioMedico.dto.consultorio.*;
+import com.codemized.challenge.consultorioMedico.dto.consultorio.AgregarUsuariosRequestDto;
 import com.codemized.challenge.consultorioMedico.exception.ConsultorioAlreadyExistsException;
 import com.codemized.challenge.consultorioMedico.exception.ConsultorioNotFoundException;
 import com.codemized.challenge.consultorioMedico.exception.ConsultorioInactivoException;
 import com.codemized.challenge.consultorioMedico.model.Consultorio;
 import com.codemized.challenge.consultorioMedico.model.Medico;
+import com.codemized.challenge.consultorioMedico.model.Usuario;
 import com.codemized.challenge.consultorioMedico.repository.ConsultorioRepository;
 import com.codemized.challenge.consultorioMedico.repository.MedicoRepository;
+import com.codemized.challenge.consultorioMedico.repository.UsuarioRepository;
 import com.codemized.challenge.consultorioMedico.service.ConsultorioService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class ConsultorioServiceImpl implements ConsultorioService {
     private final ConsultorioRepository consultorioRepository;
     private final MedicoRepository medicoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public ConsultorioDto save(ConsultorioCreateDto consultorioCreateDto) {
@@ -137,7 +141,7 @@ public class ConsultorioServiceImpl implements ConsultorioService {
     }
 
     @Override
-    public ConsultorioResumenDto obtenerResumenConsultorio(Long consultorioId) {
+    public ConsultorioResumenMedicoDto obtenerResumenConsultorio(Long consultorioId) {
         Consultorio consultorio = consultorioRepository.findById(consultorioId)
                 .filter(Consultorio::getActivo)
                 .orElseThrow(() -> new ConsultorioNotFoundException(consultorioId));
@@ -146,10 +150,69 @@ public class ConsultorioServiceImpl implements ConsultorioService {
                         .filter(Medico::getActivo)
                         .map(medico -> medico.getNombre() + " " + medico.getApellido())
                         .toList();
-        return ConsultorioResumenDto.builder()
+        return ConsultorioResumenMedicoDto.builder()
                 .id(consultorio.getId())
                 .nombre(consultorio.getNombre())
                 .nombresMedicos(nombresMedicos)
+                .build();
+    }
+
+    @Override
+    public ConsultorioDto agregarUsuarios(AgregarUsuariosRequestDto requestDto) {
+        Consultorio consultorio = consultorioRepository.findById(requestDto.getConsultorioId())
+                .orElseThrow(() -> new ConsultorioNotFoundException(requestDto.getConsultorioId()));
+        if (!consultorio.getActivo()) {
+            throw new ConsultorioInactivoException(requestDto.getConsultorioId());
+        }
+        List<Long> usuarioIds = requestDto.getUsuarioIds();
+        if (usuarioIds == null || usuarioIds.isEmpty()) {
+            throw new IllegalArgumentException("La lista de IDs de usuarios no puede estar vacía");
+        }
+        List<Usuario> usuarios = usuarioRepository.findAllById(usuarioIds);
+        if (usuarios.isEmpty() || usuarios.size() != usuarioIds.size()) {
+            throw new IllegalArgumentException("Uno o más usuarios no existen");
+        }
+        List<Usuario> usuariosActivos = usuarios.stream()
+                .filter(Usuario::getActivo)
+                .toList();
+        if (usuariosActivos.isEmpty()) {
+            throw new IllegalArgumentException("Todos los usuarios seleccionados están inactivos");
+        }
+        Hibernate.initialize(consultorio.getUsuarios());
+        Set<Usuario> usuariosActuales = consultorio.getUsuarios();
+        Set<Usuario> nuevosUsuarios = new HashSet<>();
+        if (usuariosActuales != null) {
+            nuevosUsuarios.addAll(usuariosActuales);
+        }
+        nuevosUsuarios.addAll(usuariosActivos);
+        consultorio.setUsuarios(nuevosUsuarios);
+        for (Usuario usuario : usuariosActivos) {
+            Hibernate.initialize(usuario.getConsultorios());
+            Set<Consultorio> consultoriosUsuario = usuario.getConsultorios();
+            if (consultoriosUsuario == null) {
+                consultoriosUsuario = new HashSet<>();
+                usuario.setConsultorios(consultoriosUsuario);
+            }
+            consultoriosUsuario.add(consultorio);
+        }
+        Consultorio actualizado = consultorioRepository.save(consultorio);
+        return ConsultorioMappper.toDto(actualizado);
+    }
+
+    @Override
+    public ConsultorioResumenUsuarioDto obtenerResumenUsuariosConsultorio(Long consultorioId) {
+        Consultorio consultorio = consultorioRepository.findById(consultorioId)
+                .filter(Consultorio::getActivo)
+                .orElseThrow(() -> new ConsultorioNotFoundException(consultorioId));
+        List<String> nombresUsuarios = consultorio.getUsuarios() == null ? Collections.emptyList() :
+                consultorio.getUsuarios().stream()
+                        .filter(Usuario::getActivo)
+                        .map(usuario -> usuario.getNombre() + " " + usuario.getApellido())
+                        .toList();
+        return ConsultorioResumenUsuarioDto.builder()
+                .id(consultorio.getId())
+                .nombre(consultorio.getNombre())
+                .nombresUsuarios(nombresUsuarios)
                 .build();
     }
 }
