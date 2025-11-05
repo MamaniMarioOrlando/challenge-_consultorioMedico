@@ -11,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConsultorioResumenDto {
+public class ConsultorioResumenUsuarioDto {
     private Long id;
     private String nombre;
-    private List<String> nombresMedicos;
+    private List<String> nombresUsuarios;
 }
